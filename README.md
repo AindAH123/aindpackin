@@ -5,7 +5,11 @@
 <!-- badges: end -->
 
 
-**aindpackin** is an RStudio Addin for saving, organizing, and reusing R code snippets.
+
+
+**aindpackin** is an R package that provides an interactive RStudio Addin for saving, organizing, managing, and reusing R code snippets.
+
+
 
 It provides an interactive interface that allows users to create, edit, delete, search, and insert reusable code directly into RStudio.
 
