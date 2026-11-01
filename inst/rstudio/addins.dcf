@@ -1,0 +1,4 @@
+Name: aindpackin - Open Snippet Manager
+Description: Browse, manage, and insert saved R code snippets.
+Binding: open_vault
+Interactive: true
