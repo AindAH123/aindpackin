@@ -18,7 +18,7 @@ It provides an interactive interface that allows users to create, edit, delete, 
 - Save reusable R code snippets.
 - Organize snippets into custom folders.
 - Create, rename, and delete folders.
-- Search snippets by name, folder, or code.
+- Search snippets by name
 - Edit and delete existing snippets.
 - Preview code before inserting it.
 - Insert saved code directly into the RStudio editor.
@@ -33,7 +33,7 @@ You can install the development version of **aindpackin** from GitHub:
 
 ```r
 install.packages("remotes")
-remotes::install_github("YOUR_GITHUB_USERNAME/aindpackin")
+remotes::install_github("AindAH123/aindpackin")
 ```
 
 After installation, load the package:
