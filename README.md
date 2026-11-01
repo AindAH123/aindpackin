@@ -28,6 +28,11 @@ It provides an interactive interface that allows users to create, edit, delete, 
 - Insert saved code directly into the RStudio editor.
 - Automatically preserve snippets between sessions.
 - Launch directly from RStudio's Addins menu.
+- Save highlighted R code directly from the editor without copying and pasting.
+- Search all saved snippets across folders.
+- Export snippets and folders to a backup file.
+- Import a backup to restore a saved snippet library.
+
 
 
 ## Installation

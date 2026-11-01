@@ -3,6 +3,8 @@
 export(create_folder)
 export(delete_folder)
 export(delete_snippet)
+export(export_snippets)
+export(import_snippets)
 export(list_folders)
 export(list_snippets)
 export(move_snippet)

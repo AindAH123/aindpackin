@@ -81,6 +81,17 @@ open_vault <- function(file = NULL) {
       ),
 
 
+      shiny::tags$h4("Library Backup"),
+
+      shiny::tags$div(
+        style = "display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;",
+
+        shiny::actionButton("export_btn", "Export Library"),
+        shiny::actionButton("import_btn", "Import Library")
+      ),
+
+
+
 
       shiny::textInput(
         "search",
@@ -123,6 +134,98 @@ open_vault <- function(file = NULL) {
     )
 
 
+    # Export the snippet library
+    shiny::observeEvent(input$export_btn, {
+
+      path <- rstudioapi::selectFile(
+        caption = "Export Snippet Library",
+        label = "Save",
+        path = path.expand("~"),
+        filter = "RDS Files (*.rds)",
+        existing = FALSE
+      )
+
+      if (is.null(path) || length(path) == 0 ||
+          !nzchar(path)) {
+        return()
+      }
+
+      if (!grepl("\\.rds$", path, ignore.case = TRUE)) {
+        path <- paste0(path, ".rds")
+      }
+
+      tryCatch({
+        export_snippets(path, file = file)
+
+        shiny::showNotification(
+          "Library exported successfully!",
+          type = "message"
+        )
+
+      }, error = function(e) {
+        shiny::showNotification(
+          conditionMessage(e),
+          type = "error"
+        )
+      })
+    })
+
+
+    # Import a saved snippet library
+    import_path <- shiny::reactiveVal(NULL)
+
+    shiny::observeEvent(input$import_btn, {
+
+      path <- rstudioapi::selectFile(
+        caption = "Import Snippet Library",
+        label = "Open",
+        path = path.expand("~"),
+        filter = "RDS Files (*.rds)",
+        existing = TRUE
+      )
+
+      if (length(path) != 1 || is.na(path) || !nzchar(path)) {
+        return()
+      }
+
+      import_path(path)
+
+      shiny::showModal(shiny::modalDialog(
+        title = "Import Library",
+        "This will replace your existing snippets and folders. Continue?",
+
+        footer = shiny::tagList(
+          shiny::modalButton("Cancel"),
+          shiny::actionButton("confirm_import", "Replace Library")
+        )
+      ))
+    })
+
+    # Confirm and import the library
+    shiny::observeEvent(input$confirm_import, {
+
+      shiny::req(import_path())
+
+      tryCatch({
+
+        import_snippets(
+          path = import_path(),
+          file = file,
+          overwrite = TRUE
+        )
+
+        # Close the addin after successful import
+        shiny::removeModal()
+        shiny::stopApp(NULL)
+
+      }, error = function(e) {
+
+        shiny::showNotification(
+          conditionMessage(e),
+          type = "error"
+        )
+      })
+    })
 
 
 
@@ -133,19 +236,23 @@ open_vault <- function(file = NULL) {
       current <- snippets()
 
       # Only show snippets from the selected folder
+
+      # Only filter by folder when the search box is empty
       folder <- input$browse_folder
 
-      if (is.null(folder) || !nzchar(folder)) {
-        current <- list()
-      } else {
+      if (is.null(input$search) || !nzchar(trimws(input$search))) {
+        if (is.null(folder) || !nzchar(folder)) {
+          current <- list()
+        } else {
+          matches_folder <- vapply(current, function(item) {
+            item$folder == folder ||
+              startsWith(item$folder, paste0(folder, "/"))
+          }, logical(1))
 
-        matches_folder <- vapply(current, function(item) {
-          item$folder == folder ||
-            startsWith(item$folder, paste0(folder, "/"))
-        }, logical(1))
-
-        current <- current[matches_folder]
+          current <- current[matches_folder]
+        }
       }
+
 
       query <- tolower(trimws(input$search))
 
@@ -445,9 +552,18 @@ open_vault <- function(file = NULL) {
         ),
 
 
+
         shiny::textAreaInput(
-          "new_code", "Code", rows = 7
+          "new_code",
+          "Code",
+          value = if (length(editor$selection) > 0) {
+            editor$selection[[1]]$text
+          } else {
+            ""
+          },
+          rows = 7
         ),
+
 
         footer = shiny::tagList(
           shiny::modalButton("Cancel"),
