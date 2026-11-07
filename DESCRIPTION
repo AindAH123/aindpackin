@@ -1,6 +1,6 @@
 Package: aindpackin
 Type: Package
-Title: Personal Code Snippet Manager for RStudio
+Title: Personal Code Snippet Manager for 'RStudio'
 Version: 0.1.0
 Authors@R:
     person(
@@ -11,7 +11,7 @@ Authors@R:
   )
 Description: Provides tools for creating, organizing, editing, deleting,
     searching, and inserting reusable R code snippets through an
-    interactive RStudio interface. Supports custom folders and
+    interactive 'RStudio' interface. Supports custom folders and
     persistent storage of user-defined code templates.
 Imports:
     miniUI,
